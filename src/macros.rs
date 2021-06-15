@@ -4,7 +4,7 @@ use nom::bytes::complete::take;
 use nom::combinator::map_res;
 use nom::combinator::rest;
 pub use nom::error::{make_error, ErrorKind, ParseError};
-use nom::HexDisplay;
+//use nom::HexDisplay;
 pub use nom::{IResult, Needed};
 
 /// Helper macro for newtypes: declare associated constants and implement Display trait
@@ -33,8 +33,8 @@ macro_rules! newtype_enum (
     (impl display $name:ident {$($body:tt)*}) => (
         newtype_enum!(impl $name { $($body)* });
 
-        impl ::std::fmt::Display for $name {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl ::core::fmt::Display for $name {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 newtype_enum!(@collect_disp, $name, f, self.0, $($body)*)
             }
         }
@@ -44,8 +44,8 @@ macro_rules! newtype_enum (
     (impl debug $name:ident {$($body:tt)*}) => (
         newtype_enum!(impl display $name { $($body)* });
 
-        impl ::std::fmt::Debug for $name {
-            fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        impl ::core::fmt::Debug for $name {
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
                 write!(f, "{}", self)
             }
         }
@@ -121,7 +121,8 @@ macro_rules! cond_else (
 
 /// Dump the remaining bytes to stderr, formatted as hex
 pub fn dbg_dmp_rest(i: &[u8]) -> IResult<&[u8], ()> {
-    map!(i, peek!(call!(rest)), |r| eprintln!("\n{}\n", r.to_hex(16)))
+    //map!(i, peek!(call!(rest)), |r| eprintln!("\n{}\n", r.to_hex(16)))
+    map!(i, peek!(call!(rest)), |_r| {})
 }
 
 #[deprecated(since = "3.0.1", note = "please use `be_var_u64` instead")]
@@ -177,9 +178,9 @@ macro_rules! slice_fixed(
                 Err(::nom::Err::Incomplete(Needed::new(cnt)))
             } else {
                 let mut res: [u8; $count] = unsafe {
-                    ::std::mem::MaybeUninit::uninit().assume_init()
+                    ::core::mem::MaybeUninit::uninit().assume_init()
                 };
-                unsafe{::std::ptr::copy($i.as_ptr(), res.as_mut_ptr(), cnt)};
+                unsafe{::core::ptr::copy($i.as_ptr(), res.as_mut_ptr(), cnt)};
                 Ok((&$i[cnt..],res))
             };
             ires

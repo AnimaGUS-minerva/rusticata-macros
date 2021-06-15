@@ -1,6 +1,7 @@
 //! Helper functions and structures for debugging purpose
 
-use std::fmt;
+use core::fmt;
+use alloc::vec::Vec;
 
 /// Wrapper for printing value as u8 hex data
 pub struct HexU8(pub u8);
